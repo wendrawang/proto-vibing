@@ -1,0 +1,19 @@
+included:
+  - Packages
+  - HostApp
+
+excluded:
+  - Packages/DesignKit/Sources/DesignKit/Tokens  # generated, jangan dilint
+  - Tools
+  - .build
+
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+
+identifier_name:
+  min_length: 2
+
+disabled_rules:
+  - todo  # TODO dark mode & PrivateColorConstants memang sengaja ditinggal
