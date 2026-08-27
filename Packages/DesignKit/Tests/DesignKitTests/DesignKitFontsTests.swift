@@ -71,8 +71,7 @@ final class DesignKitFontsTests: XCTestCase {
         XCTAssertEqual(hasil.name, .dummyRegular)
     }
 
-    func testRantaiDependensiDesignKitSearah() {
+    func testPenandaModulDesignKit() {
         XCTAssertEqual(DesignKit.moduleName, "DesignKit")
-        XCTAssertEqual(DesignKit.dependsOn, "RouteContract")
     }
 }

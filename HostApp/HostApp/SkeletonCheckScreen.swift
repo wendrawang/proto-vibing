@@ -1,4 +1,5 @@
 import DesignKit
+import RouteContract
 import SwiftUI
 import TransactionKit
 
@@ -79,12 +80,19 @@ struct SkeletonCheckScreen: View {
     }
 
     private var modulSection: some View {
-        Section("Rantai modul") {
-            // Dibaca berantai, bukan tiga import terpisah: kalau salah satu
-            // panah dependensi putus, baris ini tidak akan terkompilasi.
+        Section {
+            // Baris pertama dibaca berantai lewat TransactionKit.dependsOn,
+            // bukan dua import terpisah: kalau panah itu putus, baris ini tidak
+            // akan terkompilasi.
             barisModul(TransactionKit.moduleName, turun: TransactionKit.dependsOn)
-            barisModul(DesignKit.moduleName, turun: DesignKit.dependsOn)
-            barisModul(DesignKit.dependsOn, turun: nil)
+            barisModul(DesignKit.moduleName, turun: nil)
+            barisModul(RouteContract.moduleName, turun: nil)
+        } header: {
+            Text("Rantai modul")
+        } footer: {
+            Text("DesignKit sengaja tidak bergantung ke RouteContract — design "
+                 + "system tidak boleh tahu tujuan navigasi. RouteContract dipakai "
+                 + "lapisan yang memang mengurus routing; di sini HostApp langsung.")
         }
     }
 

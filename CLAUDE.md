@@ -72,7 +72,26 @@ mengikuti konvensi SPM. Menaruhnya langsung di akar package memaksa
 `path:`/`sources:` eksplisit di manifest dan pecah tiap kali folder baru
 ditambah — tidak sepadan.
 
-Arah dependensi: `HostApp → Feature → TransactionKit → DesignKit → RouteContract`. Tidak boleh terbalik, tidak boleh melingkar.
+Arah dependensi:
+
+```
+HostApp ──→ Feature ──→ TransactionKit ──→ DesignKit
+   │           │              ┆
+   └───────────┴──────────────┴──→ RouteContract
+```
+
+Tidak boleh terbalik, tidak boleh melingkar.
+
+**DesignKit tidak bergantung ke apa pun, RouteContract termasuk.** Design system
+tidak boleh tahu tujuan navigasi: tombol tidak pindah layar, tombol memanggil
+closure (aturan API #1), dan komponen bermakna domain bukan milik DesignKit
+(aturan #6). Kalau panah `DesignKit → RouteContract` ada, tidak ada satu pun
+mekanisme yang mencegah `navigator.open(...)` masuk ke dalam `ByonListRow` —
+review-lah yang harus menangkapnya, bukan kompiler.
+
+RouteContract adalah leaf, dipakai lapisan yang memang mengurus routing. Panah
+putus-putus dari TransactionKit baru ditarik kalau pipeline-nya benar-benar butuh
+`AppNavigator` (langkah 8) — jangan ditarik sebelum itu.
 
 ---
 
@@ -415,8 +434,8 @@ Pola yang menyebabkan bug di codebase lama. Jangan reproduksi:
 
 Layar `SkeletonCheckScreen` di HostApp adalah bukti langkah 1 & 2: status
 registrasi font, perbandingan visual font DesignKit vs font sistem, dan rantai
-modul yang dibaca berantai (`TransactionKit.dependsOn → DesignKit.dependsOn`)
-sehingga panah dependensi yang putus langsung gagal kompilasi.
+modul yang dibaca lewat `TransactionKit.dependsOn` sehingga panah dependensi yang
+putus langsung gagal kompilasi.
 
 Tiga tipe penanda — `RouteContract.moduleName`, `DesignKit.moduleName`,
 `TransactionKit.moduleName` — hanya ada untuk layar itu. **Hapus** saat isi

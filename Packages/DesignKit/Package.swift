@@ -8,13 +8,9 @@ let package = Package(
     products: [
         .library(name: "DesignKit", targets: ["DesignKit"])
     ],
-    dependencies: [
-        .package(path: "../RouteContract")
-    ],
     targets: [
         .target(
             name: "DesignKit",
-            dependencies: ["RouteContract"],
             exclude: ["Tokens/README.md"],
             resources: [
                 // Font tidak terdaftar otomatis dari SPM — lihat DesignKitFonts.register().
