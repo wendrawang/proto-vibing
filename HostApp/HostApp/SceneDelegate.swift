@@ -20,18 +20,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let window = UIWindow(windowScene: windowScene)
         window.rootViewController = UIHostingController(
-            rootView: SkeletonCheckScreen(fontRegistration: fontRegistration)
+            // `register()` idempoten. Panggilan kedua ini tidak mendaftarkan
+            // ulang, hanya mengembalikan hasil yang sama — termasuk alasan gagal
+            // kalau ada. Jadi layar diagnostik dapat detailnya tanpa AppDelegate
+            // perlu menyimpan state yang app sebenarnya tidak butuh.
+            rootView: SkeletonCheckScreen(fontRegistration: DesignKitFonts.register())
         )
         window.makeKeyAndVisible()
         self.window = window
-    }
-
-    /// Idiom app lama: state milik app diambil lewat `UIApplication.shared.delegate`.
-    ///
-    /// Fallback-nya aman karena `register()` idempoten — kalau cast gagal, hasilnya
-    /// tetap benar, bukan array kosong yang menyesatkan layar verifikasi.
-    private var fontRegistration: [DesignKitFonts.RegistrationResult] {
-        (UIApplication.shared.delegate as? AppDelegate)?.fontRegistration
-            ?? DesignKitFonts.register()
     }
 }

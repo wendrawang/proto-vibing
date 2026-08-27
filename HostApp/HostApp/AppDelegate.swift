@@ -5,17 +5,12 @@ import UIKit
 ///
 /// Bukan `@main struct App` SwiftUI — HostApp sengaja memakai lifecycle lama
 /// supaya titik integrasi yang diuji di sini sama dengan titik integrasi di app
-/// sebenarnya nanti: registrasi font terjadi di `didFinishLaunchingWithOptions`,
-/// dan SwiftUI dipasang lewat `UIHostingController` di dalam window milik
-/// `SceneDelegate`.
+/// sebenarnya nanti.
 ///
 /// Dipakai `@main`, bukan `@UIApplicationMain`: atribut lama itu sudah
 /// deprecated dan bikin warning di toolchain sekarang. Perilakunya identik.
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    /// Hasil registrasi font, dibaca `SceneDelegate` untuk layar verifikasi.
-    private(set) var fontRegistration: [DesignKitFonts.RegistrationResult] = []
 
     func application(
         _ application: UIApplication,
@@ -24,7 +19,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Font dari SPM package tidak terdaftar otomatis. Sekali, di sini —
         // sebelum window pertama dibuat, supaya tidak ada frame yang telanjur
         // digambar dengan font fallback.
-        fontRegistration = DesignKitFonts.register()
+        //
+        // Hasilnya dibuang: app sebenarnya tidak punya keperluan menyimpannya.
+        DesignKitFonts.register()
         return true
     }
 
