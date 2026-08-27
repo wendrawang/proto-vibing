@@ -10,13 +10,16 @@ import UIKit
 @Suite("Registrasi font DesignKit", .serialized)
 struct DesignKitFontsTests {
 
-    @Test("register() mendaftarkan semua font yang dideklarasikan di Name")
-    func registersEveryDeclaredFont() {
+    /// Font dummy yang di-bundle sekarang. Ganti saat font asli masuk.
+    private let dummyFont = "PlaygroundDummy-Regular"
+
+    @Test("register() mendaftarkan semua font yang di-bundle")
+    func registersEveryBundledFont() {
         let results = DesignKitFonts.register()
 
-        #expect(results.count == DesignKitFonts.Name.allCases.count)
+        #expect(results.count == DesignKitFonts.bundledFontNames.count)
         for result in results {
-            #expect(result.isRegistered, "\(result.name.rawValue) gagal: \(result.failureReason ?? "-")")
+            #expect(result.isRegistered, "\(result.fontName) gagal: \(result.failureReason ?? "-")")
             #expect(result.failureReason == nil)
         }
     }
@@ -29,35 +32,46 @@ struct DesignKitFontsTests {
         // Panggilan kedua menghasilkan kCTFontManagerErrorAlreadyRegistered di
         // level CoreText — itu harus dibaca sebagai sukses, bukan kegagalan.
         for result in secondRun {
-            #expect(result.isRegistered, "\(result.name.rawValue) gagal: \(result.failureReason ?? "-")")
+            #expect(result.isRegistered, "\(result.fontName) gagal: \(result.failureReason ?? "-")")
         }
     }
 
-    @Test("UIKit mengenali font setelah register()", arguments: DesignKitFonts.Name.allCases)
-    func isRegisteredAfterRegister(name: DesignKitFonts.Name) {
+    @Test("UIKit mengenali font setelah register()", arguments: DesignKitFonts.bundledFontNames)
+    func isRegisteredAfterRegister(fontName: String) {
         // Kondisi "sebelum register" tidak diuji: proses tes bisa saja sudah
         // mendaftarkan font dari tes lain. Yang dijamin: setelah register, true.
         DesignKitFonts.register()
 
-        #expect(DesignKitFonts.isRegistered(name), "\(name.rawValue) tidak dikenali UIKit")
+        #expect(DesignKitFonts.isRegistered(fontName), "\(fontName) tidak dikenali UIKit")
+    }
+
+    @Test("Nama yang tidak ada di bundle dilaporkan gagal, bukan diam")
+    func missingFontReportsFailure() {
+        let result = DesignKitFonts.register(fontName: "TidakAdaFont-Regular")
+
+        // Justru ini alasan register() mengembalikan hasil: kegagalan font tidak
+        // melempar apa pun dan tidak menghentikan app.
+        #expect(result.isRegistered == false)
+        #expect(result.failureReason != nil)
+        #expect(DesignKitFonts.isRegistered("TidakAdaFont-Regular") == false)
     }
 
     @Test("Font yang ter-resolve bukan fallback font sistem")
     func resolvedFontIsNotFallback() throws {
         DesignKitFonts.register()
-        let font = try #require(UIFont(name: DesignKitFonts.Name.dummyRegular.rawValue, size: 40))
+        let font = try #require(UIFont(name: dummyFont, size: 40))
 
         // Kalau nama PostScript salah, UIFont(name:) mengembalikan nil dan
         // #require di atas gagal. Family dicek supaya font yang ter-resolve
         // benar-benar font dari package, bukan alias ke font sistem.
         #expect(font.familyName == "PlaygroundDummy")
-        #expect(font.fontName == DesignKitFonts.Name.dummyRegular.rawValue)
+        #expect(font.fontName == dummyFont)
     }
 
     @Test("Setiap karakter ASCII punya glyph, bukan .notdef")
     func fontHasGlyphsForASCII() {
         DesignKitFonts.register()
-        let font = CTFontCreateWithName(DesignKitFonts.Name.dummyRegular.rawValue as CFString, 32, nil)
+        let font = CTFontCreateWithName(dummyFont as CFString, 32, nil)
 
         let characters = Array("Halo Playground 123".utf16)
         var glyphs = [CGGlyph](repeating: 0, count: characters.count)
@@ -68,15 +82,5 @@ struct DesignKitFontsTests {
             #expect(glyph != 0, "karakter index \(index) tidak punya glyph")
             #expect(CTFontCreatePathForGlyph(font, glyph, nil) != nil)
         }
-    }
-
-    @Test("Overload satu-font mengembalikan nama yang diminta")
-    func registerSingleFontOverload() {
-        // Jalur gagal (file tidak ada di bundle) belum bisa diuji: Name hanya
-        // berisi font yang memang di-bundle.
-        let result = DesignKitFonts.register(.dummyRegular)
-
-        #expect(result.name == .dummyRegular)
-        #expect(result.isRegistered)
     }
 }

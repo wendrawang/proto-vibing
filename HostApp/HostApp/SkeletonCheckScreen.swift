@@ -29,10 +29,10 @@ struct SkeletonCheckScreen: View {
 
     private var registrationSection: some View {
         Section("Registrasi font") {
-            ForEach(fontRegistration, id: \.name.rawValue) { result in
+            ForEach(fontRegistration, id: \.fontName) { result in
                 VStack(alignment: .leading, spacing: 4) {
                     Label {
-                        Text(result.name.rawValue)
+                        Text(result.fontName)
                             .font(.subheadline.monospaced())
                     } icon: {
                         Image(systemName: result.isRegistered ? "checkmark.circle.fill" : "xmark.circle.fill")
@@ -44,7 +44,7 @@ struct SkeletonCheckScreen: View {
                             .font(.caption)
                             .foregroundStyle(.red)
                     } else {
-                        Text("dikenali UIKit: \(DesignKitFonts.isRegistered(result.name) ? "ya" : "tidak")")
+                        Text("dikenali UIKit: \(DesignKitFonts.isRegistered(result.fontName) ? "ya" : "tidak")")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -56,7 +56,12 @@ struct SkeletonCheckScreen: View {
 
     private var comparisonSection: some View {
         Section("Bukti visual") {
-            sampleRow("Font DesignKit", font: .custom(DesignKitFonts.Name.dummyRegular.rawValue, size: 24))
+            // Nama font diambil dari hasil registrasi, bukan diketik ulang:
+            // string yang salah ketik akan fallback ke font sistem dan justru
+            // membuat layar ini melaporkan sukses palsu.
+            ForEach(fontRegistration, id: \.fontName) { result in
+                sampleRow(result.fontName, font: .custom(result.fontName, size: 24))
+            }
             sampleRow("Font sistem", font: .system(size: 24))
         }
     }
@@ -79,7 +84,7 @@ struct SkeletonCheckScreen: View {
 
     private var howToReadSection: some View {
         Section("Cara baca") {
-            Text("Baris \"Font DesignKit\" harus tampil sebagai deretan kotak. "
+            Text("Baris ber-nama-font di atas harus tampil sebagai deretan kotak. "
                  + "Kalau teksnya terbaca normal, font gagal diregistrasi dan iOS "
                  + "diam-diam fallback ke font sistem.")
             .font(.footnote)
@@ -112,18 +117,17 @@ struct SkeletonCheckScreen: View {
 }
 
 #Preview("Font terdaftar") {
-    DesignKitFonts.register()
-    return SkeletonCheckScreen(
-        fontRegistration: DesignKitFonts.Name.allCases.map {
-            .init(name: $0, isRegistered: true, failureReason: nil)
-        }
-    )
+    SkeletonCheckScreen(fontRegistration: DesignKitFonts.register())
 }
 
 #Preview("Font gagal") {
     SkeletonCheckScreen(
-        fontRegistration: DesignKitFonts.Name.allCases.map {
-            .init(name: $0, isRegistered: false, failureReason: "file tidak ada di Bundle.module")
-        }
+        fontRegistration: [
+            .init(
+                fontName: "TidakAdaFont-Regular",
+                isRegistered: false,
+                failureReason: "TidakAdaFont-Regular.ttf tidak ada di Bundle.module"
+            )
+        ]
     )
 }

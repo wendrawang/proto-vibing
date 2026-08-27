@@ -258,9 +258,18 @@ di SDK sekarang. Yang dipakai `CTFontManagerRegisterFontsForURL(url, .process, &
 `kCTFontManagerErrorAlreadyRegistered` dibaca sebagai sukses supaya `register()`
 idempoten (preview dan unit test memanggilnya berkali-kali di proses yang sama).
 
-**Nama di `DesignKitFonts.Name` adalah nama PostScript**, bukan nama file dan bukan
-nama family. `UIFont(name:)` hanya mengenali nama PostScript; salah isi = nil =
+**Isi `bundledFontNames` adalah nama PostScript**, bukan nama file dan bukan nama
+family. `UIFont(name:)` hanya mengenali nama PostScript; salah isi = nil =
 `Font.custom` diam-diam fallback ke font sistem.
+
+Daftarnya `internal`. Komponen tidak pernah menyebut nama font — mereka memakai
+style tipografi (langkah 3), jadi nama font tidak perlu jadi API publik. Yang
+publik hanya `register()`, `isRegistered(_:)`, dan `RegistrationResult`.
+
+`register()` mengembalikan hasil, tidak seperti `_ = CTFontManagerRegisterFontsForURL(...)`
+di `FontManager` app produksi. Font yang gagal terdaftar tidak melempar apa pun
+dan tidak menghentikan app — dia cuma jadi teks yang diam-diam memakai font
+sistem. Kalau hasilnya dibuang, tidak ada satu pun sinyal bahwa itu terjadi.
 
 Yang di-bundle sekarang masih font dummy berbentuk kotak (lihat `Tools/`). Kalau
 teks contoh di HostApp terbaca normal dan bukan deretan kotak, berarti registrasi
