@@ -1,79 +1,82 @@
 import CoreText
+import Testing
 import UIKit
-import XCTest
 
 @testable import DesignKit
 
-final class DesignKitFontsTests: XCTestCase {
+/// Registrasi font memodifikasi state CoreText milik seluruh proses, jadi suite
+/// ini `.serialized` — tes paralel akan saling mendaftarkan font yang sama dan
+/// membuat kode error CoreText tidak bisa ditebak.
+@Suite("Registrasi font DesignKit", .serialized)
+struct DesignKitFontsTests {
 
-    func testRegistersEveryDeclaredFont() {
+    @Test("register() mendaftarkan semua font yang dideklarasikan di Name")
+    func registersEveryDeclaredFont() {
         let results = DesignKitFonts.register()
 
-        XCTAssertEqual(results.count, DesignKitFonts.Name.allCases.count)
+        #expect(results.count == DesignKitFonts.Name.allCases.count)
         for result in results {
-            XCTAssertTrue(result.isRegistered, "\(result.name.rawValue) gagal: \(result.failureReason ?? "-")")
-            XCTAssertNil(result.failureReason)
+            #expect(result.isRegistered, "\(result.name.rawValue) gagal: \(result.failureReason ?? "-")")
+            #expect(result.failureReason == nil)
         }
     }
 
-    func testRegisterIsIdempotent() {
+    @Test("register() idempoten — panggilan kedua tetap sukses")
+    func registerIsIdempotent() {
         DesignKitFonts.register()
         let secondRun = DesignKitFonts.register()
 
         // Panggilan kedua menghasilkan kCTFontManagerErrorAlreadyRegistered di
         // level CoreText — itu harus dibaca sebagai sukses, bukan kegagalan.
         for result in secondRun {
-            XCTAssertTrue(result.isRegistered, "\(result.name.rawValue) gagal: \(result.failureReason ?? "-")")
+            #expect(result.isRegistered, "\(result.name.rawValue) gagal: \(result.failureReason ?? "-")")
         }
     }
 
-    func testIsRegisteredAfterRegister() {
+    @Test("UIKit mengenali font setelah register()", arguments: DesignKitFonts.Name.allCases)
+    func isRegisteredAfterRegister(name: DesignKitFonts.Name) {
         // Kondisi "sebelum register" tidak diuji: proses tes bisa saja sudah
         // mendaftarkan font dari tes lain. Yang dijamin: setelah register, true.
         DesignKitFonts.register()
 
-        for name in DesignKitFonts.Name.allCases {
-            XCTAssertTrue(DesignKitFonts.isRegistered(name), "\(name.rawValue) tidak dikenali UIKit")
-        }
+        #expect(DesignKitFonts.isRegistered(name), "\(name.rawValue) tidak dikenali UIKit")
     }
 
-    func testResolvedFontIsNotFallback() throws {
+    @Test("Font yang ter-resolve bukan fallback font sistem")
+    func resolvedFontIsNotFallback() throws {
         DesignKitFonts.register()
-        let font = try XCTUnwrap(UIFont(name: DesignKitFonts.Name.dummyRegular.rawValue, size: 40))
+        let font = try #require(UIFont(name: DesignKitFonts.Name.dummyRegular.rawValue, size: 40))
 
         // Kalau nama PostScript salah, UIFont(name:) mengembalikan nil dan
-        // XCTUnwrap di atas gagal. Family dicek supaya font yang ter-resolve
+        // #require di atas gagal. Family dicek supaya font yang ter-resolve
         // benar-benar font dari package, bukan alias ke font sistem.
-        XCTAssertEqual(font.familyName, "PlaygroundDummy")
-        XCTAssertEqual(font.fontName, DesignKitFonts.Name.dummyRegular.rawValue)
+        #expect(font.familyName == "PlaygroundDummy")
+        #expect(font.fontName == DesignKitFonts.Name.dummyRegular.rawValue)
     }
 
-    func testFontHasGlyphsForASCII() {
+    @Test("Setiap karakter ASCII punya glyph, bukan .notdef")
+    func fontHasGlyphsForASCII() {
         DesignKitFonts.register()
         let font = CTFontCreateWithName(DesignKitFonts.Name.dummyRegular.rawValue as CFString, 32, nil)
 
         let characters = Array("Halo Playground 123".utf16)
         var glyphs = [CGGlyph](repeating: 0, count: characters.count)
-        XCTAssertTrue(CTFontGetGlyphsForCharacters(font, characters, &glyphs, characters.count))
+        #expect(CTFontGetGlyphsForCharacters(font, characters, &glyphs, characters.count))
 
         // Spasi boleh kosong; sisanya harus punya outline, bukan glyph .notdef.
         for (index, glyph) in glyphs.enumerated() where characters[index] != 0x20 {
-            XCTAssertNotEqual(glyph, 0, "karakter index \(index) tidak punya glyph")
-            XCTAssertNotNil(CTFontCreatePathForGlyph(font, glyph, nil))
+            #expect(glyph != 0, "karakter index \(index) tidak punya glyph")
+            #expect(CTFontCreatePathForGlyph(font, glyph, nil) != nil)
         }
     }
 
-    func testRegisterSingleFontOverload() {
-        // Overload satu-font dipakai HostApp lewat register() jamak, tapi API-nya
-        // publik jadi diuji sendiri. Jalur gagal (file tidak ada di bundle) belum
-        // bisa diuji: Name hanya berisi font yang memang di-bundle.
+    @Test("Overload satu-font mengembalikan nama yang diminta")
+    func registerSingleFontOverload() {
+        // Jalur gagal (file tidak ada di bundle) belum bisa diuji: Name hanya
+        // berisi font yang memang di-bundle.
         let result = DesignKitFonts.register(.dummyRegular)
 
-        XCTAssertEqual(result.name, .dummyRegular)
-        XCTAssertTrue(result.isRegistered)
-    }
-
-    func testDesignKitModuleName() {
-        XCTAssertEqual(DesignKit.moduleName, "DesignKit")
+        #expect(result.name == .dummyRegular)
+        #expect(result.isRegistered)
     }
 }

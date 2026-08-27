@@ -1,7 +1,5 @@
 import DesignKit
-import RouteContract
 import SwiftUI
-import TransactionKit
 
 /// Layar verifikasi langkah 1 & 2.
 ///
@@ -22,7 +20,6 @@ struct SkeletonCheckScreen: View {
             List {
                 registrationSection
                 comparisonSection
-                moduleSection
                 hostSection
                 howToReadSection
             }
@@ -64,30 +61,19 @@ struct SkeletonCheckScreen: View {
         }
     }
 
-    private var moduleSection: some View {
-        Section {
-            // Baris pertama dibaca berantai lewat TransactionKit.dependsOn,
-            // bukan dua import terpisah: kalau panah itu putus, baris ini tidak
-            // akan terkompilasi.
-            moduleRow(TransactionKit.moduleName, dependsOn: TransactionKit.dependsOn)
-            moduleRow(DesignKit.moduleName, dependsOn: nil)
-            moduleRow(RouteContract.moduleName, dependsOn: nil)
-        } header: {
-            Text("Rantai modul")
-        } footer: {
-            Text("DesignKit sengaja tidak bergantung ke RouteContract — design "
-                 + "system tidak boleh tahu tujuan navigasi. RouteContract dipakai "
-                 + "lapisan yang memang mengurus routing; di sini HostApp langsung.")
-        }
-    }
-
     private var hostSection: some View {
-        Section("Host") {
+        Section {
             // HostApp sengaja memakai lifecycle UIKit, bukan `@main struct App`,
             // supaya titik integrasinya sama dengan app produksi yang sudah ada.
             hostRow("Lifecycle", value: "AppDelegate + SceneDelegate")
             hostRow("Root", value: "UIHostingController")
             hostRow("Registrasi font", value: "didFinishLaunchingWithOptions")
+        } header: {
+            Text("Host")
+        } footer: {
+            Text("DesignKit tidak bergantung ke RouteContract — design system "
+                 + "tidak boleh tahu tujuan navigasi. RouteContract dipakai "
+                 + "lapisan yang memang mengurus routing.")
         }
     }
 
@@ -121,19 +107,6 @@ struct SkeletonCheckScreen: View {
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.trailing)
-        }
-    }
-
-    private func moduleRow(_ name: String, dependsOn: String?) -> some View {
-        HStack {
-            Text(name)
-                .font(.subheadline.monospaced())
-            Spacer()
-            if let dependsOn {
-                Text("→ \(dependsOn)")
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.secondary)
-            }
         }
     }
 }

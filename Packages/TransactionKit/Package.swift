@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 
 import PackageDescription
 
@@ -12,13 +12,10 @@ let package = Package(
         .package(path: "../DesignKit")
     ],
     targets: [
+        // Test target menyusul di langkah 8, bersama nextStep yang wajib diuji.
         .target(
             name: "TransactionKit",
             dependencies: ["DesignKit"]
-        ),
-        .testTarget(
-            name: "TransactionKitTests",
-            dependencies: ["TransactionKit"]
         )
     ]
 )

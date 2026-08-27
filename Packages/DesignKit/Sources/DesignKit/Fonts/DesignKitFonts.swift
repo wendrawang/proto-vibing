@@ -21,7 +21,7 @@ public enum DesignKitFonts {
     /// taruh file-nya di `Resources/Fonts/`, lalu ganti case di sini dengan
     /// nama PostScript-nya — bukan nama file, bukan nama family. Kalau ketiganya
     /// berbeda, `UIFont(name:)` hanya mengenali nama PostScript.
-    public enum Name: String, CaseIterable {
+    public enum Name: String, CaseIterable, Sendable {
         case dummyRegular = "PlaygroundDummy-Regular"
 
         /// Nama file di `Resources/Fonts`, tanpa ekstensi.
@@ -31,7 +31,7 @@ public enum DesignKitFonts {
 
     /// Hasil satu registrasi. Dipakai layar verifikasi HostApp supaya kegagalan
     /// font terlihat sebagai status, bukan cuma teks yang diam-diam fallback.
-    public struct RegistrationResult: Equatable {
+    public struct RegistrationResult: Equatable, Sendable {
         public let name: Name
         public let isRegistered: Bool
         /// Alasan gagal; `nil` kalau berhasil.

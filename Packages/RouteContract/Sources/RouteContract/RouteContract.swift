@@ -1,9 +1,6 @@
-/// Penanda modul RouteContract.
-///
-/// Isi sebenarnya (`enum Route`, `protocol AppNavigator`) masuk di langkah 7.
-/// Sampai saat itu tipe ini punya satu tugas: dipakai layar verifikasi HostApp
-/// untuk membuktikan rantai dependensi benar-benar ter-link, bukan sekadar
-/// dideklarasikan di Package.swift.
-public enum RouteContract {
-    public static let moduleName = "RouteContract"
-}
+// Placeholder supaya target tidak kosong — SPM menolak target tanpa file sumber.
+//
+// Isi sebenarnya (`enum Route`, `protocol AppNavigator`) masuk di langkah 7.
+// Sengaja `internal`: sampai ada yang benar-benar dibutuhkan dari luar, modul ini
+// tidak meng-export apa pun.
+enum RouteContractPlaceholder {}

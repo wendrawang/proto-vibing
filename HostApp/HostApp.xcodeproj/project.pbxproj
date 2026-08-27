@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AA0000000000000000000017 /* DesignKit in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000014 /* DesignKit */; };
-		AA0000000000000000000016 /* RouteContract in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000013 /* RouteContract */; };
-		AA0000000000000000000018 /* TransactionKit in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000015 /* TransactionKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,8 +34,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA0000000000000000000017 /* DesignKit in Frameworks */,
-				AA0000000000000000000016 /* RouteContract in Frameworks */,
-				AA0000000000000000000018 /* TransactionKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,8 +77,6 @@
 			name = HostApp;
 			packageProductDependencies = (
 				AA0000000000000000000014 /* DesignKit */,
-				AA0000000000000000000013 /* RouteContract */,
-				AA0000000000000000000015 /* TransactionKit */,
 			);
 			productName = HostApp;
 			productReference = AA0000000000000000000005 /* HostApp.app */;
@@ -114,8 +108,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				AA0000000000000000000011 /* XCLocalSwiftPackageReference "../Packages/DesignKit" */,
-				AA0000000000000000000010 /* XCLocalSwiftPackageReference "../Packages/RouteContract" */,
-				AA0000000000000000000012 /* XCLocalSwiftPackageReference "../Packages/TransactionKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AA0000000000000000000003 /* Products */;
@@ -271,28 +263,12 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Packages/DesignKit;
 		};
-		AA0000000000000000000010 /* XCLocalSwiftPackageReference "../Packages/RouteContract" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Packages/RouteContract;
-		};
-		AA0000000000000000000012 /* XCLocalSwiftPackageReference "../Packages/TransactionKit" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Packages/TransactionKit;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		AA0000000000000000000014 /* DesignKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DesignKit;
-		};
-		AA0000000000000000000013 /* RouteContract */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RouteContract;
-		};
-		AA0000000000000000000015 /* TransactionKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = TransactionKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

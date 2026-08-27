@@ -379,6 +379,10 @@ Dijaga `.swiftlint.yml`, bukan ingatan.
   commit tetap Bahasa Indonesia.
 - **Maksimum 50 baris per method.**
 - **Maksimum 250 baris per file.**
+- **Tes memakai swift-testing** (`import Testing`, `@Test`, `#expect`), bukan
+  XCTest. Package memakai `swift-tools-version: 6.0` supaya SPM menautkan
+  framework-nya. Deskripsi tes ditulis di `@Test("...")` sehingga nama fungsinya
+  tetap pendek — deskripsi bukan alasan untuk nama 50 karakter.
 
 Nama 1–2 huruf tidak menjelaskan apa-apa. Nama di atas 35 karakter hampir selalu
 tanda fungsinya kebanyakan tugas — **potong fungsinya, jangan singkat namanya**.
@@ -387,6 +391,11 @@ biasanya pembagian tanggung jawabnya, bukan batasnya.
 
 `Tokens/` dikecualikan dari lint. Kalau keluaran generator melanggar aturan ini,
 generatornya yang diperbaiki — file-nya jangan disentuh.
+
+Package berjalan di Swift 6 language mode. Konsekuensi yang paling sering
+menggigit: **tipe publik tidak dapat `Sendable` otomatis lintas modul** — kalau
+sebuah tipe publik dipakai di konteks konkuren (termasuk `arguments:` di
+swift-testing), conformance-nya harus ditulis eksplisit.
 
 ---
 
@@ -446,16 +455,14 @@ Pola yang menyebabkan bug di codebase lama. Jangan reproduksi:
 
 | Langkah | Status |
 |---|---|
-| 1. Package skeleton + HostApp | **selesai** — build iOS hijau, rantai `TransactionKit → DesignKit → RouteContract` ter-link |
-| 2. Registrasi font dari `Bundle.module` | **selesai** — diregistrasi di `AppDelegate`, terverifikasi tampil di simulator, 7 unit test hijau |
+| 1. Package skeleton + HostApp | **selesai** — build iOS hijau untuk ketiga package |
+| 2. Registrasi font dari `Bundle.module` | **selesai** — diregistrasi di `AppDelegate`, terverifikasi tampil di simulator, 6 tes hijau |
 | 3. Theme | belum — **terblokir**: `PrivateColorConstants` belum ada di `Tokens/` |
 | 4–9 | belum |
 
 Layar `SkeletonCheckScreen` di HostApp adalah bukti langkah 1 & 2: status
-registrasi font, perbandingan visual font DesignKit vs font sistem, dan rantai
-modul yang dibaca lewat `TransactionKit.dependsOn` sehingga panah dependensi yang
-putus langsung gagal kompilasi.
+registrasi font dan perbandingan visual font DesignKit vs font sistem.
 
-Tiga tipe penanda — `RouteContract.moduleName`, `DesignKit.moduleName`,
-`TransactionKit.moduleName` — hanya ada untuk layar itu. **Hapus** saat isi
-sebenarnya masuk (langkah 3, 7, 8).
+`RouteContract` dan `TransactionKit` masih berisi placeholder `internal` supaya
+target-nya tidak kosong, dan **belum ditautkan ke HostApp** — belum ada yang
+mengimpornya. Tautkan saat langkah 6/7 benar-benar memakainya, jangan sebelum itu.
