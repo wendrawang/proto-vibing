@@ -7,13 +7,30 @@ excluded:
   - Tools
   - .build
 
+# Identifier bahasa Inggris, 3–35 karakter.
+# Nama 1–2 huruf tidak menjelaskan apa-apa. Nama di atas 35 karakter biasanya
+# tanda fungsinya kebanyakan tugas — potong fungsinya, jangan singkat namanya.
+identifier_name:
+  min_length:
+    warning: 3
+    error: 3
+  max_length:
+    warning: 35
+    error: 35
+
+function_body_length:
+  warning: 50
+  error: 50
+
+file_length:
+  warning: 250
+  error: 250
+  ignore_comment_only_lines: true
+
 line_length:
   warning: 140
   error: 200
   ignores_comments: true
-
-identifier_name:
-  min_length: 2
 
 disabled_rules:
   - todo  # TODO dark mode & PrivateColorConstants memang sengaja ditinggal

@@ -15,39 +15,39 @@ struct SkeletonCheckScreen: View {
 
     let fontRegistration: [DesignKitFonts.RegistrationResult]
 
-    private let contoh = "Halo Playground 123"
+    private let sampleText = "Halo Playground 123"
 
     var body: some View {
         NavigationStack {
             List {
-                fontSection
-                bandinganSection
-                modulSection
+                registrationSection
+                comparisonSection
+                moduleSection
                 hostSection
-                catatanSection
+                howToReadSection
             }
             .navigationTitle("Skeleton Check")
         }
     }
 
-    private var fontSection: some View {
+    private var registrationSection: some View {
         Section("Registrasi font") {
-            ForEach(fontRegistration, id: \.name.rawValue) { hasil in
+            ForEach(fontRegistration, id: \.name.rawValue) { result in
                 VStack(alignment: .leading, spacing: 4) {
                     Label {
-                        Text(hasil.name.rawValue)
+                        Text(result.name.rawValue)
                             .font(.subheadline.monospaced())
                     } icon: {
-                        Image(systemName: hasil.isRegistered ? "checkmark.circle.fill" : "xmark.circle.fill")
-                            .foregroundStyle(hasil.isRegistered ? Color.green : Color.red)
+                        Image(systemName: result.isRegistered ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .foregroundStyle(result.isRegistered ? Color.green : Color.red)
                     }
 
-                    if let alasan = hasil.failureReason {
-                        Text(alasan)
+                    if let reason = result.failureReason {
+                        Text(reason)
                             .font(.caption)
                             .foregroundStyle(.red)
                     } else {
-                        Text("dikenali UIKit: \(DesignKitFonts.isRegistered(hasil.name) ? "ya" : "tidak")")
+                        Text("dikenali UIKit: \(DesignKitFonts.isRegistered(result.name) ? "ya" : "tidak")")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -57,36 +57,21 @@ struct SkeletonCheckScreen: View {
         }
     }
 
-    private var bandinganSection: some View {
+    private var comparisonSection: some View {
         Section("Bukti visual") {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Font DesignKit")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(contoh)
-                    .font(.custom(DesignKitFonts.Name.dummyRegular.rawValue, size: 24))
-            }
-            .padding(.vertical, 2)
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Font sistem")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(contoh)
-                    .font(.system(size: 24))
-            }
-            .padding(.vertical, 2)
+            sampleRow("Font DesignKit", font: .custom(DesignKitFonts.Name.dummyRegular.rawValue, size: 24))
+            sampleRow("Font sistem", font: .system(size: 24))
         }
     }
 
-    private var modulSection: some View {
+    private var moduleSection: some View {
         Section {
             // Baris pertama dibaca berantai lewat TransactionKit.dependsOn,
             // bukan dua import terpisah: kalau panah itu putus, baris ini tidak
             // akan terkompilasi.
-            barisModul(TransactionKit.moduleName, turun: TransactionKit.dependsOn)
-            barisModul(DesignKit.moduleName, turun: nil)
-            barisModul(RouteContract.moduleName, turun: nil)
+            moduleRow(TransactionKit.moduleName, dependsOn: TransactionKit.dependsOn)
+            moduleRow(DesignKit.moduleName, dependsOn: nil)
+            moduleRow(RouteContract.moduleName, dependsOn: nil)
         } header: {
             Text("Rantai modul")
         } footer: {
@@ -100,13 +85,13 @@ struct SkeletonCheckScreen: View {
         Section("Host") {
             // HostApp sengaja memakai lifecycle UIKit, bukan `@main struct App`,
             // supaya titik integrasinya sama dengan app produksi yang sudah ada.
-            barisHost("Lifecycle", nilai: "AppDelegate + SceneDelegate")
-            barisHost("Root", nilai: "UIHostingController")
-            barisHost("Registrasi font", nilai: "didFinishLaunchingWithOptions")
+            hostRow("Lifecycle", value: "AppDelegate + SceneDelegate")
+            hostRow("Root", value: "UIHostingController")
+            hostRow("Registrasi font", value: "didFinishLaunchingWithOptions")
         }
     }
 
-    private var catatanSection: some View {
+    private var howToReadSection: some View {
         Section("Cara baca") {
             Text("Baris \"Font DesignKit\" harus tampil sebagai deretan kotak. "
                  + "Kalau teksnya terbaca normal, font gagal diregistrasi dan iOS "
@@ -116,25 +101,36 @@ struct SkeletonCheckScreen: View {
         }
     }
 
-    private func barisHost(_ label: String, nilai: String) -> some View {
+    private func sampleRow(_ caption: String, font: Font) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(caption)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(sampleText)
+                .font(font)
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func hostRow(_ label: String, value: String) -> some View {
         HStack(alignment: .firstTextBaseline) {
             Text(label)
                 .font(.subheadline)
             Spacer(minLength: 12)
-            Text(nilai)
+            Text(value)
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.trailing)
         }
     }
 
-    private func barisModul(_ nama: String, turun: String?) -> some View {
+    private func moduleRow(_ name: String, dependsOn: String?) -> some View {
         HStack {
-            Text(nama)
+            Text(name)
                 .font(.subheadline.monospaced())
             Spacer()
-            if let turun {
-                Text("→ \(turun)")
+            if let dependsOn {
+                Text("→ \(dependsOn)")
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
             }

@@ -371,6 +371,25 @@ List penerima memakai pagination. Komponen list harus mendukungnya sejak awal:
 
 ---
 
+## Gaya kode
+
+Dijaga `.swiftlint.yml`, bukan ingatan.
+
+- **Identifier bahasa Inggris**, 3–35 karakter. Komentar, teks UI, dan pesan
+  commit tetap Bahasa Indonesia.
+- **Maksimum 50 baris per method.**
+- **Maksimum 250 baris per file.**
+
+Nama 1–2 huruf tidak menjelaskan apa-apa. Nama di atas 35 karakter hampir selalu
+tanda fungsinya kebanyakan tugas — **potong fungsinya, jangan singkat namanya**.
+Batas 50 dan 250 baris bekerja dengan cara yang sama: kalau mentok, yang salah
+biasanya pembagian tanggung jawabnya, bukan batasnya.
+
+`Tokens/` dikecualikan dari lint. Kalau keluaran generator melanggar aturan ini,
+generatornya yang diperbaiki — file-nya jangan disentuh.
+
+---
+
 ## Larangan yang berlaku di seluruh repo
 
 Pola yang menyebabkan bug di codebase lama. Jangan reproduksi:
