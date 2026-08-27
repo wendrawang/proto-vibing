@@ -58,6 +58,15 @@ HostApp/               app kecil untuk menjalankan & mendemokan package
 Tools/                 generator font dummy — hapus saat font asli masuk
 ```
 
+**HostApp memakai lifecycle UIKit** (`AppDelegate` + `SceneDelegate` +
+`UIHostingController`), bukan `@main struct App`, supaya titik integrasinya sama
+dengan app produksi yang sudah ada: font diregistrasi di
+`didFinishLaunchingWithOptions`, window dimiliki `SceneDelegate`. Di sinilah nanti
+`AppRoot` dipasang — lihat bagian Overlay.
+
+Dipakai `@main`, bukan `@UIApplicationMain`: atribut lama itu sudah deprecated dan
+bikin warning di toolchain sekarang. Perilakunya identik.
+
 Sub-folder `Tokens/`, `Theme/`, dst. ada di dalam `Sources/<nama-target>/`
 mengikuti konvensi SPM. Menaruhnya langsung di akar package memaksa
 `path:`/`sources:` eksplisit di manifest dan pecah tiap kali folder baru
@@ -400,7 +409,7 @@ Pola yang menyebabkan bug di codebase lama. Jangan reproduksi:
 | Langkah | Status |
 |---|---|
 | 1. Package skeleton + HostApp | **selesai** — build iOS hijau, rantai `TransactionKit → DesignKit → RouteContract` ter-link |
-| 2. Registrasi font dari `Bundle.module` | **selesai** — terverifikasi tampil di simulator, 7 unit test hijau |
+| 2. Registrasi font dari `Bundle.module` | **selesai** — diregistrasi di `AppDelegate`, terverifikasi tampil di simulator, 7 unit test hijau |
 | 3. Theme | belum — **terblokir**: `PrivateColorConstants` belum ada di `Tokens/` |
 | 4–9 | belum |
 

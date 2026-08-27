@@ -22,6 +22,7 @@ struct SkeletonCheckScreen: View {
                 fontSection
                 bandinganSection
                 modulSection
+                hostSection
                 catatanSection
             }
             .navigationTitle("Skeleton Check")
@@ -87,6 +88,16 @@ struct SkeletonCheckScreen: View {
         }
     }
 
+    private var hostSection: some View {
+        Section("Host") {
+            // HostApp sengaja memakai lifecycle UIKit, bukan `@main struct App`,
+            // supaya titik integrasinya sama dengan app produksi yang sudah ada.
+            barisHost("Lifecycle", nilai: "AppDelegate + SceneDelegate")
+            barisHost("Root", nilai: "UIHostingController")
+            barisHost("Registrasi font", nilai: "didFinishLaunchingWithOptions")
+        }
+    }
+
     private var catatanSection: some View {
         Section("Cara baca") {
             Text("Baris \"Font DesignKit\" harus tampil sebagai deretan kotak. "
@@ -94,6 +105,18 @@ struct SkeletonCheckScreen: View {
                  + "diam-diam fallback ke font sistem.")
             .font(.footnote)
             .foregroundStyle(.secondary)
+        }
+    }
+
+    private func barisHost(_ label: String, nilai: String) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(label)
+                .font(.subheadline)
+            Spacer(minLength: 12)
+            Text(nilai)
+                .font(.caption.monospaced())
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.trailing)
         }
     }
 
