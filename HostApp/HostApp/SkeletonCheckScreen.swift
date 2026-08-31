@@ -60,9 +60,9 @@ struct SkeletonCheckScreen: View {
             // string yang salah ketik akan fallback ke font sistem dan justru
             // membuat layar ini melaporkan sukses palsu.
             ForEach(fontRegistration, id: \.fontName) { result in
-                sampleRow(result.fontName, font: .custom(result.fontName, size: 24))
+                createSampleRow(result.fontName, font: .custom(result.fontName, size: 24))
             }
-            sampleRow("System font", font: .system(size: 24))
+            createSampleRow("System font", font: .system(size: 24))
         }
     }
 
@@ -70,9 +70,9 @@ struct SkeletonCheckScreen: View {
         Section {
             // HostApp sengaja memakai lifecycle UIKit, bukan `@main struct App`,
             // supaya titik integrasinya sama dengan app produksi yang sudah ada.
-            hostRow("Lifecycle", value: "AppDelegate + SceneDelegate")
-            hostRow("Root", value: "UIHostingController")
-            hostRow("Font registration", value: "didFinishLaunchingWithOptions")
+            createHostRow("Lifecycle", value: "AppDelegate + SceneDelegate")
+            createHostRow("Root", value: "UIHostingController")
+            createHostRow("Font registration", value: "didFinishLaunchingWithOptions")
         } header: {
             Text("Host")
         } footer: {
@@ -92,7 +92,7 @@ struct SkeletonCheckScreen: View {
         }
     }
 
-    private func sampleRow(_ caption: String, font: Font) -> some View {
+    private func createSampleRow(_ caption: String, font: Font) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(caption)
                 .font(.caption)
@@ -103,7 +103,7 @@ struct SkeletonCheckScreen: View {
         .padding(.vertical, 2)
     }
 
-    private func hostRow(_ label: String, value: String) -> some View {
+    private func createHostRow(_ label: String, value: String) -> some View {
         HStack(alignment: .firstTextBaseline) {
             Text(label)
                 .font(.subheadline)

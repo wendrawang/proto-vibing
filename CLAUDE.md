@@ -124,12 +124,12 @@ public enum Proposition { case `default`, premier, `private` }
 public enum Appearance  { case light, dark }
 
 public struct ThemeResolver {
-    public static func resolve(_ p: Proposition, _ a: Appearance) -> FigmaColorProtocol {
-        switch p {
+    public static func resolve(_ proposition: Proposition, _ appearance: Appearance) -> FigmaColorProtocol {
+        switch proposition {
         case .premier: return PremierColorConstants()   // abaikan appearance
         case .private: return PrivateColorConstants()   // abaikan appearance
         case .default:
-            switch a {
+            switch appearance {
             case .light: return DefaultColorConstants()
             case .dark:  return DefaultColorConstants() // TODO: DefaultDarkColorConstants
             }
@@ -393,6 +393,19 @@ Dijaga `.swiftlint.yml`, bukan ingatan.
   bukan produk. Copy produk berbahasa Indonesia bukan pengecualian atas aturan
   ini: copy adalah **data yang dioper ke komponen**, bukan string yang ditulis
   di dalam DesignKit (aturan API #1 — komponen menerima nilai).
+- **Satu tipe per file**, nama file = nama tipe. Struct, class, enum, dan
+  protocol masing-masing punya file sendiri. Tipe bersarang ditulis lewat
+  `extension` di file terpisah supaya nama pemakainya tidak berubah —
+  `DesignKitFonts.RegistrationResult` tinggal di `RegistrationResult.swift`.
+  Pengecualian satu-satunya: `#Preview` tetap menempel di file komponennya
+  (Definition of Done #7 — preview yang jauh dari komponennya cepat basi).
+- **Bool diawali `is`** — `isRegistered`, bukan `registered`. Berlaku untuk
+  property, variabel lokal, dan fungsi yang mengembalikan `Bool`.
+- **Fungsi yang membuat sesuatu diawali `create`**, bukan `build` atau `make`.
+  `createSampleRow`, bukan `buildSampleRow`.
+- **Nama ditulis penuh, jangan disingkat** — `fontURL` bukan `u`,
+  `unmanagedError` bukan `err`. Akronim boleh mengikuti nama tipenya
+  (`cfError` untuk `CFError`, `fontURL` untuk `URL`).
 - **Maksimum 50 baris per method.**
 - **Maksimum 250 baris per file.**
 - **Tes memakai swift-testing** (`import Testing`, `@Test`, `#expect`), bukan

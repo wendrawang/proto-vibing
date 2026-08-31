@@ -11,7 +11,7 @@ import UIKit
 struct DesignKitFontsTests {
 
     /// Font dummy yang di-bundle sekarang. Ganti saat font asli masuk.
-    private let dummyFont = "PlaygroundDummy-Regular"
+    private let dummyFontName = "PlaygroundDummy-Regular"
 
     @Test("register() registers every bundled font")
     func registersEveryBundledFont() {
@@ -59,19 +59,19 @@ struct DesignKitFontsTests {
     @Test("The resolved font is not a system fallback")
     func resolvedFontIsNotFallback() throws {
         DesignKitFonts.register()
-        let font = try #require(UIFont(name: dummyFont, size: 40))
+        let font = try #require(UIFont(name: dummyFontName, size: 40))
 
         // Kalau nama PostScript salah, UIFont(name:) mengembalikan nil dan
         // #require di atas gagal. Family dicek supaya font yang ter-resolve
         // benar-benar font dari package, bukan alias ke font sistem.
         #expect(font.familyName == "PlaygroundDummy")
-        #expect(font.fontName == dummyFont)
+        #expect(font.fontName == dummyFontName)
     }
 
     @Test("Every ASCII character has a glyph, not .notdef")
     func fontHasGlyphsForASCII() {
         DesignKitFonts.register()
-        let font = CTFontCreateWithName(dummyFont as CFString, 32, nil)
+        let font = CTFontCreateWithName(dummyFontName as CFString, 32, nil)
 
         let characters = Array("Hello Playground 123".utf16)
         var glyphs = [CGGlyph](repeating: 0, count: characters.count)

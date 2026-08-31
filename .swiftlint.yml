@@ -35,3 +35,25 @@ line_length:
 
 disabled_rules:
   - todo  # TODO dark mode & PrivateColorConstants memang sengaja ditinggal
+
+opt_in_rules:
+  # Satu tipe per file. Belum diverifikasi dengan swiftlint yang benar-benar
+  # terpasang — kalau rule ini ikut menghitung `#Preview` sebagai deklarasi
+  # kedua, matikan saja: aturannya tetap tertulis di CLAUDE.md dan ditegakkan
+  # lewat review.
+  - one_declaration_per_file
+
+custom_rules:
+  # Bool menjawab pertanyaan ya/tidak, jadi namanya dibaca sebagai pertanyaan.
+  boolean_is_prefix:
+    name: "Bool diawali is"
+    regex: '(?:var|let)\s+(?!is[A-Z])[a-zA-Z_]\w*\s*:\s*Bool'
+    message: "Nama Bool diawali `is` — isRegistered, bukan registered."
+    severity: warning
+
+  # build/make dipakai di banyak arti; create hanya berarti satu hal.
+  create_not_build:
+    name: "Prefix create"
+    regex: '\bfunc\s+(?:build|make)[A-Z]'
+    message: "Fungsi yang membuat sesuatu diawali `create`, bukan build/make."
+    severity: warning

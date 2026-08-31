@@ -30,25 +30,6 @@ public enum DesignKitFonts {
 
     private static let fileExtension = "ttf"
 
-    /// Hasil satu registrasi.
-    ///
-    /// Inilah bedanya dengan `_ = CTFontManagerRegisterFontsForURL(...)`: font
-    /// yang gagal terdaftar tidak melempar apa pun dan tidak menghentikan app —
-    /// dia cuma jadi teks yang diam-diam memakai font sistem. Kalau hasilnya
-    /// dibuang, tidak ada satu pun sinyal bahwa itu terjadi.
-    public struct RegistrationResult: Equatable, Sendable {
-        public let fontName: String
-        public let isRegistered: Bool
-        /// Alasan gagal; `nil` kalau berhasil.
-        public let failureReason: String?
-
-        public init(fontName: String, isRegistered: Bool, failureReason: String?) {
-            self.fontName = fontName
-            self.isRegistered = isRegistered
-            self.failureReason = failureReason
-        }
-    }
-
     /// Mendaftarkan seluruh font yang di-bundle ke proses ini.
     ///
     /// Idempoten — aman dipanggil ulang dari preview atau unit test.
@@ -66,7 +47,7 @@ public enum DesignKitFonts {
     }
 
     static func register(fontName: String) -> RegistrationResult {
-        guard let url = Bundle.module.url(forResource: fontName, withExtension: fileExtension) else {
+        guard let fontURL = Bundle.module.url(forResource: fontName, withExtension: fileExtension) else {
             return RegistrationResult(
                 fontName: fontName,
                 isRegistered: false,
@@ -74,13 +55,13 @@ public enum DesignKitFonts {
             )
         }
 
-        var error: Unmanaged<CFError>?
-        if CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error) {
+        var unmanagedError: Unmanaged<CFError>?
+        if CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &unmanagedError) {
             return RegistrationResult(fontName: fontName, isRegistered: true, failureReason: nil)
         }
 
         // Sudah terdaftar bukan kegagalan.
-        let cfError = error?.takeRetainedValue()
+        let cfError = unmanagedError?.takeRetainedValue()
         if let cfError, CFErrorGetCode(cfError) == CTFontManagerError.alreadyRegistered.rawValue {
             return RegistrationResult(fontName: fontName, isRegistered: true, failureReason: nil)
         }
