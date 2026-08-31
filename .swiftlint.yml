@@ -1,0 +1,59 @@
+included:
+  - Packages
+  - HostApp
+
+excluded:
+  - Packages/DesignKit/Sources/DesignKit/Tokens  # generated, jangan dilint
+  - Tools
+  - .build
+
+# Identifier bahasa Inggris, 3–35 karakter. Lihat CLAUDE.md: seluruh isi kode
+# bahasa Inggris — hanya komentar yang Bahasa Indonesia.
+# Nama 1–2 huruf tidak menjelaskan apa-apa. Nama di atas 35 karakter biasanya
+# tanda fungsinya kebanyakan tugas — potong fungsinya, jangan singkat namanya.
+identifier_name:
+  min_length:
+    warning: 3
+    error: 3
+  max_length:
+    warning: 35
+    error: 35
+
+function_body_length:
+  warning: 50
+  error: 50
+
+file_length:
+  warning: 250
+  error: 250
+  ignore_comment_only_lines: true
+
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+
+disabled_rules:
+  - todo  # TODO dark mode & PrivateColorConstants memang sengaja ditinggal
+
+opt_in_rules:
+  # Satu tipe per file. Belum diverifikasi dengan swiftlint yang benar-benar
+  # terpasang — kalau rule ini ikut menghitung `#Preview` sebagai deklarasi
+  # kedua, matikan saja: aturannya tetap tertulis di CLAUDE.md dan ditegakkan
+  # lewat review.
+  - one_declaration_per_file
+
+custom_rules:
+  # Bool menjawab pertanyaan ya/tidak, jadi namanya dibaca sebagai pertanyaan.
+  boolean_is_prefix:
+    name: "Bool diawali is"
+    regex: '(?:var|let)\s+(?!is[A-Z])[a-zA-Z_]\w*\s*:\s*Bool'
+    message: "Nama Bool diawali `is` — isRegistered, bukan registered."
+    severity: warning
+
+  # build/make dipakai di banyak arti; create hanya berarti satu hal.
+  create_not_build:
+    name: "Prefix create"
+    regex: '\bfunc\s+(?:build|make)[A-Z]'
+    message: "Fungsi yang membuat sesuatu diawali `create`, bukan build/make."
+    severity: warning
