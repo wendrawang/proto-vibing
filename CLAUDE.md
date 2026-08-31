@@ -384,8 +384,15 @@ List penerima memakai pagination. Komponen list harus mendukungnya sejak awal:
 
 Dijaga `.swiftlint.yml`, bukan ingatan.
 
-- **Identifier bahasa Inggris**, 3–35 karakter. Komentar, teks UI, dan pesan
-  commit tetap Bahasa Indonesia.
+- **Semua isi kode bahasa Inggris** — identifier (3–35 karakter), string
+  literal, pesan diagnostik, deskripsi tes, dan teks UI HostApp. Yang tetap
+  Bahasa Indonesia hanya **komentar**, dokumen (`CLAUDE.md`, `README.md`), dan
+  pesan commit.
+
+  Teks di HostApp ikut bahasa Inggris karena HostApp adalah harness verifikasi,
+  bukan produk. Copy produk berbahasa Indonesia bukan pengecualian atas aturan
+  ini: copy adalah **data yang dioper ke komponen**, bukan string yang ditulis
+  di dalam DesignKit (aturan API #1 — komponen menerima nilai).
 - **Maksimum 50 baris per method.**
 - **Maksimum 250 baris per file.**
 - **Tes memakai swift-testing** (`import Testing`, `@Test`, `#expect`), bukan

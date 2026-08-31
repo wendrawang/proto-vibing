@@ -7,7 +7,8 @@ excluded:
   - Tools
   - .build
 
-# Identifier bahasa Inggris, 3–35 karakter.
+# Identifier bahasa Inggris, 3–35 karakter. Lihat CLAUDE.md: seluruh isi kode
+# bahasa Inggris — hanya komentar yang Bahasa Indonesia.
 # Nama 1–2 huruf tidak menjelaskan apa-apa. Nama di atas 35 karakter biasanya
 # tanda fungsinya kebanyakan tugas — potong fungsinya, jangan singkat namanya.
 identifier_name:

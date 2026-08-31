@@ -70,7 +70,7 @@ public enum DesignKitFonts {
             return RegistrationResult(
                 fontName: fontName,
                 isRegistered: false,
-                failureReason: "\(fontName).\(fileExtension) tidak ada di Bundle.module"
+                failureReason: "\(fontName).\(fileExtension) is missing from Bundle.module"
             )
         }
 
@@ -88,7 +88,7 @@ public enum DesignKitFonts {
         return RegistrationResult(
             fontName: fontName,
             isRegistered: false,
-            failureReason: cfError.map { CFErrorCopyDescription($0) as String } ?? "gagal tanpa CFError"
+            failureReason: cfError.map { CFErrorCopyDescription($0) as String } ?? "registration failed without a CFError"
         )
     }
 }

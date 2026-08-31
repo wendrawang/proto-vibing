@@ -13,7 +13,7 @@ struct SkeletonCheckScreen: View {
 
     let fontRegistration: [DesignKitFonts.RegistrationResult]
 
-    private let sampleText = "Halo Playground 123"
+    private let sampleText = "Hello Playground 123"
 
     var body: some View {
         NavigationStack {
@@ -28,7 +28,7 @@ struct SkeletonCheckScreen: View {
     }
 
     private var registrationSection: some View {
-        Section("Registrasi font") {
+        Section("Font registration") {
             ForEach(fontRegistration, id: \.fontName) { result in
                 VStack(alignment: .leading, spacing: 4) {
                     Label {
@@ -44,7 +44,7 @@ struct SkeletonCheckScreen: View {
                             .font(.caption)
                             .foregroundStyle(.red)
                     } else {
-                        Text("dikenali UIKit: \(DesignKitFonts.isRegistered(result.fontName) ? "ya" : "tidak")")
+                        Text("resolved by UIKit: \(DesignKitFonts.isRegistered(result.fontName) ? "yes" : "no")")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -55,14 +55,14 @@ struct SkeletonCheckScreen: View {
     }
 
     private var comparisonSection: some View {
-        Section("Bukti visual") {
+        Section("Visual proof") {
             // Nama font diambil dari hasil registrasi, bukan diketik ulang:
             // string yang salah ketik akan fallback ke font sistem dan justru
             // membuat layar ini melaporkan sukses palsu.
             ForEach(fontRegistration, id: \.fontName) { result in
                 sampleRow(result.fontName, font: .custom(result.fontName, size: 24))
             }
-            sampleRow("Font sistem", font: .system(size: 24))
+            sampleRow("System font", font: .system(size: 24))
         }
     }
 
@@ -72,21 +72,21 @@ struct SkeletonCheckScreen: View {
             // supaya titik integrasinya sama dengan app produksi yang sudah ada.
             hostRow("Lifecycle", value: "AppDelegate + SceneDelegate")
             hostRow("Root", value: "UIHostingController")
-            hostRow("Registrasi font", value: "didFinishLaunchingWithOptions")
+            hostRow("Font registration", value: "didFinishLaunchingWithOptions")
         } header: {
             Text("Host")
         } footer: {
-            Text("DesignKit tidak bergantung ke RouteContract — design system "
-                 + "tidak boleh tahu tujuan navigasi. RouteContract dipakai "
-                 + "lapisan yang memang mengurus routing.")
+            Text("DesignKit does not depend on RouteContract — a design system "
+                 + "must not know navigation destinations. RouteContract belongs to "
+                 + "the layers that actually handle routing.")
         }
     }
 
     private var howToReadSection: some View {
-        Section("Cara baca") {
-            Text("Baris ber-nama-font di atas harus tampil sebagai deretan kotak. "
-                 + "Kalau teksnya terbaca normal, font gagal diregistrasi dan iOS "
-                 + "diam-diam fallback ke font sistem.")
+        Section("How to read this") {
+            Text("The font-named rows above must render as a row of boxes. "
+                 + "If the text reads normally, registration failed and iOS "
+                 + "silently fell back to the system font.")
             .font(.footnote)
             .foregroundStyle(.secondary)
         }
@@ -116,17 +116,17 @@ struct SkeletonCheckScreen: View {
     }
 }
 
-#Preview("Font terdaftar") {
+#Preview("Font registered") {
     SkeletonCheckScreen(fontRegistration: DesignKitFonts.register())
 }
 
-#Preview("Font gagal") {
+#Preview("Font failed") {
     SkeletonCheckScreen(
         fontRegistration: [
             .init(
-                fontName: "TidakAdaFont-Regular",
+                fontName: "MissingFont-Regular",
                 isRegistered: false,
-                failureReason: "TidakAdaFont-Regular.ttf tidak ada di Bundle.module"
+                failureReason: "MissingFont-Regular.ttf is missing from Bundle.module"
             )
         ]
     )
